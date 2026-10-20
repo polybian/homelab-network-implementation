@@ -1,0 +1,10 @@
+# Never commit live exports, backups, or credentials
+*.xml.bak
+config-*.xml
+opnsense-backup*/
+*.key
+*.pem
+*.pfx
+unattend*.xml
+*credentials*
+.labtest/

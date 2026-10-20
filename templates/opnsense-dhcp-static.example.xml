@@ -1,0 +1,28 @@
+<!--
+  TEMPLATE — not a live OPNsense export.
+  Sanitized example of DHCP static mappings from <dhcpd> in config.xml.
+  MAC addresses and hostnames are __PLACEHOLDERS__ - replace them with your
+  own lab values before use, and never commit real MAC/inventory data.
+-->
+<dhcpd>
+  <!-- VLAN 10 - MGMT/LAN -->
+  <opt1>
+    <staticmap>
+      <mac>__MAC_ADDRESS_ADMIN_PC__</mac>
+      <ipaddr>192.168.10.50</ipaddr>
+      <hostname>__ADMIN_PC_HOSTNAME__</hostname>
+      <descr>Admin workstation - DHCP reservation</descr>
+    </staticmap>
+  </opt1>
+  <!-- VLAN 20 - SERVERS: servers are STATIC, not DHCP, by design.
+       Shown here only if you choose a reservation instead of a static IP. -->
+  <opt2>
+    <staticmap>
+      <mac>__MAC_ADDRESS_LABDC01__</mac>
+      <ipaddr>192.168.20.10</ipaddr>
+      <hostname>labdc01</hostname>
+      <descr>Windows Server DC - PREFER static IP set in the guest OS</descr>
+    </staticmap>
+  </opt2>
+  <!-- VLAN 30 - IOT-GUEST: no static mappings by design (guests are ephemeral). -->
+</dhcpd>

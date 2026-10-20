@@ -1,0 +1,31 @@
+# TEMPLATE — human-readable rule list, not a config export.
+# Apply these in OPNsense (Firewall -> Rules) in the order shown, per
+# interface tab. Matches docs/firewall-rule-matrix.md. No credentials here.
+
+# --- Interface: WAN ---
+# (nothing to add — default deny inbound; keep GUI/SSH off WAN)
+
+# --- Interface: MGMT_LAN (VLAN 10) ---
+# 1. PASS  src MGMT_LAN net -> dst any, ports any
+#        Admin segment may initiate anywhere (incl. hypervisor + firewall mgmt).
+# 2. PASS  src MGMT_LAN net -> dst 192.168.20.10, ports alias AD_Domain_Ports
+#        (Covered by rule 1; listed separately so a stricter version can
+#         replace rule 1 without breaking domain logons.)
+
+# --- Interface: SERVERS (VLAN 20) ---
+# 1. BLOCK src SERVERS net -> dst MGMT_LAN net, log = on
+#        No server-initiated traffic into the admin segment.
+# 2. PASS  src SERVERS net -> dst any (WAN), ports 80,443
+#        Updates only.
+# 3. PASS  src SERVERS net -> dst 192.168.20.1, port 53
+#        OPNsense fallback DNS.
+# 4. (default) BLOCK everything else, log = on
+
+# --- Interface: IOT_GUEST (VLAN 30) ---
+# 1. BLOCK src IOT_GUEST net -> dst alias RFC1918_Networks, log = on
+#        *** MUST be first *** Guests can never reach internal addresses.
+# 2. PASS  src IOT_GUEST net -> dst 192.168.30.1, ports 53,80,443
+#        DNS forwarder + gateway services only.
+# 3. PASS  src IOT_GUEST net -> dst any (WAN), ports 80,443
+#        Guest internet.
+# 4. (default) BLOCK everything else, log = on
