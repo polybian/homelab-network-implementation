@@ -1,12 +1,12 @@
-# Homelab Network Lab — Virtualized Segmented Network with OPNsense + Active Directory
+# Homelab Network Implementation — Virtualized Segmented Network with OPNsense + Active Directory
 
-A production-style virtualized network build, designed from scratch as a lab:
-an OPNsense firewall-router VM segments one home/lab network into three VLANs,
+A production-style virtualized network build, designed from scratch:
+an OPNsense firewall-router VM segments one home network into three VLANs,
 with a Windows Server Active Directory domain controller handling identity,
 DNS, and DHCP on the server VLAN.
 
-> **Lab, not a production deployment.** All addresses, hostnames, and settings
-> here are design values for a home/lab build. No employer network, client
+> **Design values, not a production deployment.** All addresses, hostnames, and settings
+> here are design values for a home network build. No employer network, client
 > network, or production system is represented in this repo.
 
 **What this demonstrates:** network segmentation with VLANs (802.1Q), firewall
@@ -34,7 +34,7 @@ step-by-step build runbook with a verification checklist.
               MGMT/LAN   SERVERS        IOT-GUEST
                   │         │             │
         ┌─────────┘    ┌────┴──────────┐  └──┬─────────────┐
-        │ admin PC     │ labdc01 (AD)  │  guest Wi-Fi /   │
+        │ admin PC     │ dc01 (AD)  │  guest Wi-Fi /   │
         │ .10.50 (rsv) │ .20.10 static │  IoT devices     │
         └──────────────┴───────────────┘  (no RFC1918      │
                                             lateral access)
@@ -61,7 +61,7 @@ step-by-step build runbook with a verification checklist.
 # 1. Sanity-check the addressing plan before you build anything
 python3 scripts/validate-address-plan.py
 
-# 2. Build the lab on a host (Proxmox VE or ESXi), following the runbook
+# 2. Build on a host (Proxmox VE or ESXi), following the runbook
 #    - Hypervisor + VLAN-aware vSwitch      -> docs/build-runbook.md §1-2
 #    - OPNsense VM install + VLAN setup    -> docs/build-runbook.md §3-4
 #    - Windows Server DC (AD DS/DNS/DHCP)  -> docs/build-runbook.md §5-6

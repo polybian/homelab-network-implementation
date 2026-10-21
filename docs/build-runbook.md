@@ -1,8 +1,8 @@
-# Build Runbook — Homelab Network Lab
+# Build Runbook — Homelab Network Implementation
 
-Prerequisites: a lab host with 2+ NICs, ≥16 GB RAM, ≥100 GB disk; Proxmox VE
+Prerequisites: a virtualization host with 2+ NICs, ≥16 GB RAM, ≥100 GB disk; Proxmox VE
 8+ **or** ESXi 7/8 installer; OPNsense ISO; Windows Server 2022 (or 2025)
-ISO + a valid evaluation or licensed key. All values below are lab design
+ISO + a valid evaluation or licensed key. All values below are design
 values (see `ip-vlan-plan.md`).
 
 ## 1. Hypervisor install
@@ -58,21 +58,21 @@ values (see `ip-vlan-plan.md`).
 1. Create the VM on the SERVERS port group: 2 vCPU, 4 GB RAM, 60 GB disk;
    static IP 192.168.20.10/24, gateway 192.168.20.1, DNS 127.0.0.1 (self
    after promotion; temporarily use 192.168.20.1).
-2. Install Windows Server; rename computer to `labdc01`; set the static IP.
+2. Install Windows Server; rename computer to `dc01`; set the static IP.
 3. Server Manager → Add Roles: **AD DS, DNS Server, DHCP Server**.
-4. Promote to domain controller: new forest, root domain `lab.local`
-   (NetBIOS `LAB`); set DSRM password; let DNS install as AD-integrated.
+4. Promote to domain controller: new forest, root domain `home.arpa`
+   (NetBIOS `HOME`); set DSRM password; let DNS install as AD-integrated.
 5. Configure DHCP scopes per `ip-vlan-plan.md` (VLAN 10: 192.168.10.100–199;
    VLAN 20: 192.168.20.100–149), with option 006 (DNS) = 192.168.20.10 and
-   option 015 (DNS domain) = `lab.local`; enable DNS dynamic updates.
+   option 015 (DNS domain) = `home.arpa`; enable DNS dynamic updates.
 6. If DHCP stays on OPNsense instead: set OPNsense DHCP option 006 to
    192.168.20.10 and note that client DNS records won't self-register —
    the documented trade-off in `architecture.md`.
 
 ## 6. Join a client + Group Policy smoke test
 
-1. Join a VLAN 10 VM to `lab.local`; confirm logon with a domain account.
-2. `nslookup labdc01.lab.local` must resolve to 192.168.20.10 from VLAN 10.
+1. Join a VLAN 10 VM to `home.arpa`; confirm logon with a domain account.
+2. `nslookup dc01.home.arpa` must resolve to 192.168.20.10 from VLAN 10.
 3. Create a test GPO (e.g. a desktop wallpaper or a mapped drive) and
    confirm it applies with `gpresult /r`.
 

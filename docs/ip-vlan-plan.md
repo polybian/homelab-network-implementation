@@ -1,6 +1,6 @@
 # IP / VLAN Address Plan
 
-All values are **lab design values** for a home/lab network — no real
+All values are **design values** for a home network — no real
 corporate or ISP network is represented. RFC 1918 private space is used
 throughout; VLAN IDs 10/20/30 are the tagged VLANs on the OPNsense trunk.
 
@@ -9,7 +9,7 @@ throughout; VLAN IDs 10/20/30 are the tagged VLANs on the OPNsense trunk.
 | VLAN ID | Name | Subnet | Gateway (OPNsense) | DHCP range | Purpose | Key hosts |
 |---|---|---|---|---|---|---|
 | 10 | MGMT/LAN | 192.168.10.0/24 | 192.168.10.1 | 192.168.10.100 – 192.168.10.199 | Admin laptops, hypervisor management, domain-joined workstations | 192.168.10.1 OPNsense gateway; 192.168.10.50 `admin-pc` (DHCP reservation); 192.168.10.2 hypervisor mgmt IP |
-| 20 | SERVERS | 192.168.20.0/24 | 192.168.20.1 | 192.168.20.100 – 192.168.20.149 | Lab servers (small scope — servers are static) | 192.168.20.1 OPNsense gateway; 192.168.20.10 `labdc01.lab.local` (AD DC, static); 192.168.20.11 `filesvr01` (placeholder, static) |
+| 20 | SERVERS | 192.168.20.0/24 | 192.168.20.1 | 192.168.20.100 – 192.168.20.149 | Home servers (small scope — servers are static) | 192.168.20.1 OPNsense gateway; 192.168.20.10 `dc01.home.arpa` (AD DC, static); 192.168.20.11 `filesvr01` (placeholder, static) |
 | 30 | IOT-GUEST | 192.168.30.0/24 | 192.168.30.1 | 192.168.30.100 – 192.168.30.250 | Guest Wi-Fi + IoT devices; fully isolated from internal subnets | 192.168.30.1 OPNsense gateway; all clients DHCP |
 
 **VLAN 1 / untagged:** reserved for the hypervisor's native management on the
@@ -29,10 +29,10 @@ No untrusted device plugs into an untagged port.
 
 ## DNS design
 
-- Domain: `lab.local` (lab-only placeholder; not registered, not a public
-  zone). NetBIOS name: `LAB`.
-- On VLAN 20, the DC (`labdc01`) runs **AD-integrated DNS** and is the
-  authoritative server for `lab.local`.
+- Domain: `home.arpa` (RFC 8375 — reserved for home networks, never a public
+  zone). NetBIOS name: `HOME`.
+- On VLAN 20, the DC (`dc01`) runs **AD-integrated DNS** and is the
+  authoritative server for `home.arpa`.
 - DHCP options per VLAN point clients at the right resolver:
   - VLAN 10/20 → 192.168.20.10 (the DC)
   - VLAN 30 → 192.168.30.1 (OPNsense DNS forwarder to upstream), so guests
@@ -41,9 +41,9 @@ No untrusted device plugs into an untagged port.
   resolver) via conditional-forwarders — the DC never gets the firewall
   bypassed.
 
-## What changes if this stops being a lab
+## What changes for a production deployment
 
-- Replace `lab.local` with a registered domain you control; `.local`
-  collides with mDNS and is bad practice outside a lab.
+- Replace `home.arpa` with a registered domain you control if the network
+  ever needs public DNS.
 - Shrink DHCP scopes further and move every server to a reservation; document
   every static assignment in a change-controlled inventory.

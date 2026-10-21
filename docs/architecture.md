@@ -2,14 +2,14 @@
 
 ## Topology
 
-- **Host:** one hypervisor (Proxmox VE or ESXi) on a lab machine with at
+- **Host:** one hypervisor (Proxmox VE or ESXi) on a dedicated machine with at
   least 2 NICs — one for WAN uplink, one for the trunked LAN side.
 - **OPNsense VM** (primary firewall-router): 2 vNICs — `em0` = WAN (DHCP
   from the upstream modem/router), `em1` = LAN carrying 802.1Q-tagged
   VLANs 10/20/30. OPNsense holds the `.1` gateway on each VLAN and performs
   inter-VLAN routing; the firewall matrix decides what crosses.
 - **Windows Server VM** on VLAN 20, static `192.168.20.10`, promoted to a
-  domain controller for `lab.local`: AD DS + DNS + DHCP roles (design
+  domain controller for `home.arpa`: AD DS + DNS + DHCP roles (design
   choice below).
 - **vSwitch:** Proxmox — one VLAN-aware bridge; OPNsense tags on the guest
   side. ESXi — port groups with VLAN IDs 10/20/30 on the trunked vSwitch,
@@ -25,9 +25,9 @@ OPNsense as primary because:
 - **UI/API:** the MVC/Phalcon-based UI is cleaner for firewall-rule review,
   and the REST API makes rule/alias management scriptable.
 - **WireGuard:** first-class WireGuard support for a future remote-access
-  extension (this lab pairs naturally with a VPN server build).
+  extension (this build pairs naturally with a VPN server implementation).
 - **Licensing clarity:** pfSense Plus branding/trademark friction on
-  non-Netgate hardware is a distraction for a lab; OPNsense avoids it.
+  non-Netgate hardware is a distraction for a home build; OPNsense avoids it.
 
 pfSense is documented in the runbook as the drop-in alternative — the VLAN,
 firewall, and AD designs are identical; only the UI steps differ.
@@ -35,7 +35,7 @@ firewall, and AD designs are identical; only the UI steps differ.
 ## Why one router does everything
 
 OPNsense is the default gateway for all three VLANs (router-on-a-stick via
-the tagged trunk) instead of adding a layer-3 switch. In a lab this is the
+the tagged trunk) instead of adding a layer-3 switch. In a home network this is the
 right call: one policy point, one log source, no ACL mismatch between a
 switch and a firewall. At scale you'd move routing to a L3 switch and keep
 the firewall at the perimeter — and I'd say so in an interview.
@@ -43,9 +43,9 @@ the firewall at the perimeter — and I'd say so in an interview.
 ## Why AD DS + DNS + DHCP on one DC
 
 A single Windows Server VM holds all three roles — standard for a small
-lab/single-domain build:
+home/single-domain build:
 
-- **AD DS:** identity for the lab (users, groups, Group Policy). Forest
+- **AD DS:** identity for the network (users, groups, Group Policy). Forest
   functional level: highest the installed Windows Server supports.
 - **AD-integrated DNS:** zone replication rides AD replication, and secure
   dynamic updates let domain members self-register — one less service to

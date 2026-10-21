@@ -1,7 +1,7 @@
 <!--
   TEMPLATE — not a live OPNsense export.
-  Sanitized example of the <aliases> section of config.xml for the Homelab
-  Network Lab. Values below are lab design values from docs/ip-vlan-plan.md.
+  Sanitized example of the <aliases> section of config.xml for the home
+  network implementation. Values below are design values from docs/ip-vlan-plan.md.
   Create the aliases via Firewall -> Aliases in the GUI, or merge carefully.
   No real credentials, MACs, or public IPs are used anywhere in this repo.
 -->
@@ -19,9 +19,9 @@
     <descr>TCP/UDP AD DS ports (DNS, Kerberos, RPC, LDAP, SMB, GC, ADWS)</descr>
   </alias>
   <alias>
-    <name>Lab_Servers</name>
+    <name>Home_Servers</name>
     <type>host</type>
     <address>192.168.20.10 192.168.20.11</address>
-    <descr>labdc01 (AD DC) + filesvr01 - static hosts on VLAN 20</descr>
+    <descr>dc01 (AD DC) + filesvr01 - static hosts on VLAN 20</descr>
   </alias>
 </aliases>

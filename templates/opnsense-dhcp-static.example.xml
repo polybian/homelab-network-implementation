@@ -2,7 +2,7 @@
   TEMPLATE — not a live OPNsense export.
   Sanitized example of DHCP static mappings from <dhcpd> in config.xml.
   MAC addresses and hostnames are __PLACEHOLDERS__ - replace them with your
-  own lab values before use, and never commit real MAC/inventory data.
+  own values before use, and never commit real MAC/inventory data.
 -->
 <dhcpd>
   <!-- VLAN 10 - MGMT/LAN -->
@@ -18,9 +18,9 @@
        Shown here only if you choose a reservation instead of a static IP. -->
   <opt2>
     <staticmap>
-      <mac>__MAC_ADDRESS_LABDC01__</mac>
+      <mac>__MAC_ADDRESS_DC01__</mac>
       <ipaddr>192.168.20.10</ipaddr>
-      <hostname>labdc01</hostname>
+      <hostname>dc01</hostname>
       <descr>Windows Server DC - PREFER static IP set in the guest OS</descr>
     </staticmap>
   </opt2>
