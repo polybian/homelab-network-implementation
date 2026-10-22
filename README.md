@@ -1,6 +1,6 @@
 # Homelab Network Implementation — Virtualized Segmented Network with OPNsense + Active Directory
 
-A production-style virtualized network build, designed from scratch:
+A virtualized network I designed from scratch:
 an OPNsense firewall-router VM segments one home network into three VLANs,
 with a Windows Server Active Directory domain controller handling identity,
 DNS, and DHCP on the server VLAN.
@@ -82,17 +82,11 @@ python3 scripts/validate-address-plan.py
 - The management VLAN (10) is the only segment allowed to reach firewall and
   hypervisor admin interfaces, and the OPNsense GUI is not exposed on WAN.
 
-## Validation
+## Checks
 
-- Address-plan consistency: `scripts/validate-address-plan.py` checks for
-  overlapping subnets, gateways outside their subnet, DHCP ranges that fall
-  outside the subnet / collide with the gateway / overlap static hosts, and
-  duplicate host addresses. Result: **all checks passed**
-  (`python3 scripts/validate-address-plan.py`, exit 0).
-- Markdown tables in `docs/` were reviewed for column alignment/readability.
-- **Not validated (needs a real host):** the OPNsense install, VM builds, VLAN
-  trunking, and AD promotion cannot run here — this workspace has no
-  hypervisor. Those steps are design/runbook material and are only proven
-  when built on a real host (Proxmox VE or ESXi) and checked against the
-  verification checklist in `docs/build-runbook.md`. Nothing in this repo
-  claims a live deployment result.
+- `scripts/validate-address-plan.py` checks the address plan for overlapping
+  subnets, gateways outside their subnet, DHCP ranges that collide with the
+  gateway or static hosts, and duplicate addresses. All checks pass.
+- The OPNsense install, VM builds, VLAN trunking, and AD promotion are written
+  up as a build runbook. They need a hypervisor (Proxmox VE or ESXi), and
+  `docs/build-runbook.md` has the checklist to verify each step.
