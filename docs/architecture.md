@@ -38,7 +38,7 @@ OPNsense is the default gateway for all three VLANs (router-on-a-stick via
 the tagged trunk) instead of adding a layer-3 switch. In a home network this is the
 right call: one policy point, one log source, no ACL mismatch between a
 switch and a firewall. At scale you'd move routing to a L3 switch and keep
-the firewall at the perimeter — and I'd say so in an interview.
+the firewall at the perimeter.
 
 ## Why AD DS + DNS + DHCP on one DC
 

@@ -17,15 +17,21 @@
 #        No server-initiated traffic into the admin segment.
 # 2. PASS  src SERVERS net -> dst any (WAN), ports 80,443
 #        Updates only.
-# 3. PASS  src SERVERS net -> dst 192.168.20.1, port 53
+# 3. PASS  src SERVERS net -> dst any, port 123/udp
+#        NTP — required for Kerberos time sync on the domain controller.
+# 4. PASS  src SERVERS net -> dst 192.168.20.1, port 53
 #        OPNsense fallback DNS.
-# 4. (default) BLOCK everything else, log = on
+# 5. (default) BLOCK everything else, log = on
 
 # --- Interface: IOT_GUEST (VLAN 30) ---
-# 1. BLOCK src IOT_GUEST net -> dst alias RFC1918_Networks, log = on
-#        *** MUST be first *** Guests can never reach internal addresses.
-# 2. PASS  src IOT_GUEST net -> dst 192.168.30.1, ports 53,80,443
-#        DNS forwarder + gateway services only.
+# 1. PASS  src IOT_GUEST net -> dst 192.168.30.1, port 53 TCP/UDP
+#        *** MUST be first *** DNS only. 192.168.30.1 is inside
+#        RFC1918_Networks, so this pass must precede the RFC1918 block.
+# 2. BLOCK src IOT_GUEST net -> dst alias RFC1918_Networks, log = on
+#        Guests can never reach internal addresses (reordered below DNS).
 # 3. PASS  src IOT_GUEST net -> dst any (WAN), ports 80,443
 #        Guest internet.
 # 4. (default) BLOCK everything else, log = on
+#
+# NOTE: port 80/443 to 192.168.30.1 was deliberately removed — that is the
+# OPNsense web GUI on this VLAN and must never be reachable from guests.

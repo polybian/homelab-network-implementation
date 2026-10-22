@@ -11,11 +11,11 @@ are allowed automatically by the state table).
 | 3 | VLAN10 (MGMT) → any | any | Allow | Admin segment: the only VLAN permitted to reach hypervisor/OPNsense management and to manage servers. |
 | 4 | VLAN10 → SERVERS (192.168.20.0/24) | AD set¹ | Allow | Domain-joined workstations on MGMT need AD ports to the DC for logon, Group Policy, and DNS. |
 | 5 | VLAN20 (SERVERS) → any | any | **Deny (default)** | Servers do not roam; they expose defined services only, and breaches here must not spread freely. |
-| 6 | SERVERS → WAN | 80/443 | Allow | Patches, time sync (NTP over 123 optional), and Windows Update need outbound HTTPS only. |
+| 6 | SERVERS → WAN | 80/443, 123/udp | Allow | Patches and Windows Update need outbound HTTPS; UDP 123 (NTP) is explicitly allowed because the domain controller needs time sync for Kerberos. |
 | 7 | SERVERS → MGMT | any | **Deny** | Server breach must not pivot into the admin segment. |
 | 8 | SERVERS → SERVERS (intra) | any | Allow | Backend traffic between home servers (e.g. file share ↔ backup VM) stays inside the VLAN. |
-| 9 | VLAN30 (IOT-GUEST) → 192.168.0.0/16, 10.0.0.0/8, 172.16.0.0/12 | any | **Deny (alias: RFC1918_Networks)** | Guests and IoT devices cannot reach *any* internal address, including the DC and the admin VLAN. |
-| 10 | VLAN30 → VLAN30 (gateway only) | 53, 80/443 (to 192.168.30.1 only) | Allow | Guests/IoT need DNS (OPNsense forwarder) and the captive-portal/admin UI none — gateway is resolver + egress only. |
+| 9 | VLAN30 (IOT-GUEST) → 192.168.30.1 | 53 TCP/UDP | Allow | ***Must precede rule 10.*** The firewall's own address on this VLAN (192.168.30.1) falls inside the RFC1918 alias, so the DNS pass must come first or guests lose name resolution. DNS only — no 80/443, so the OPNsense web GUI is unreachable from guests. |
+| 10 | VLAN30 (IOT-GUEST) → 192.168.0.0/16, 10.0.0.0/8, 172.16.0.0/12 | any | **Deny (alias: RFC1918_Networks)** | Guests and IoT devices cannot reach *any* internal address, including the DC and the admin VLAN. Evaluated after the DNS pass in rule 9. |
 | 11 | VLAN30 → WAN | 80/443 | Allow | Guest internet access (web). No SMB, no RDP, no arbitrary ports outward beyond what's listed. |
 | 12 | MGMT → OPNsense (192.168.10.1) | 443, 22 | Allow | Web GUI + SSH management, admin VLAN only. |
 | 13 | SERVERS → OPNsense (192.168.20.1) | 53 | Allow | Servers use OPNsense as fallback DNS for external names the DC doesn't resolve. |
@@ -32,12 +32,9 @@ change), UDP 123 (NTP), TCP 9389 (ADWS). In OPNsense this is one alias
   `10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16`) so the isolation rule
   survives even if subnets are renumbered — the template is in
   `templates/opnsense-aliases.example.xml`.
-- Rule ordering matters: the RFC1918 block (9) sits **above** the guest
-  WAN-allow (11); otherwise guests could reach internal addresses through
-  the general allow. OPNsense evaluates rules first-match on the interface.
-- Logging: rules 1, 5, 7, and 9 have logging enabled, so blocked attempts
+- Rule ordering matters on the guest VLAN: the DNS pass to the firewall itself (rule 9) sits **above** the RFC1918 block (rule 10), because 192.168.30.1 is inside the RFC1918 alias — first-match evaluation would otherwise break guest DNS. The same principle puts the guest WAN-allow (11) below both. OPNsense evaluates rules first-match on the interface.
+- Logging: rules 1, 5, 7, 9, and 10 have logging enabled, so blocked attempts
   from guests/IoT and the WAN are visible in Firewall → Log Files → Live
-  View — useful both for troubleshooting and for talking about the design
-  in interviews.
+  View — useful for troubleshooting and design review.
 - Anti-spoofing: OPNsense enables reverse-path filtering by default; each
   VLAN interface only accepts source addresses from its own subnet.

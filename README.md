@@ -87,10 +87,10 @@ python3 scripts/validate-address-plan.py
 - Address-plan consistency: `scripts/validate-address-plan.py` checks for
   overlapping subnets, gateways outside their subnet, DHCP ranges that fall
   outside the subnet / collide with the gateway / overlap static hosts, and
-  duplicate host addresses. Result in this sandbox: **all checks passed**
+  duplicate host addresses. Result: **all checks passed**
   (`python3 scripts/validate-address-plan.py`, exit 0).
 - Markdown tables in `docs/` were reviewed for column alignment/readability.
-- **Not validated in this sandbox:** the OPNsense install, VM builds, VLAN
+- **Not validated (needs a real host):** the OPNsense install, VM builds, VLAN
   trunking, and AD promotion cannot run here — this workspace has no
   hypervisor. Those steps are design/runbook material and are only proven
   when built on a real host (Proxmox VE or ESXi) and checked against the
