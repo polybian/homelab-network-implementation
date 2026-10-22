@@ -48,7 +48,6 @@ step-by-step build runbook with a verification checklist.
 | `docs/ip-vlan-plan.md` | Address plan: VLANs, subnets, gateways, DHCP ranges, key hosts |
 | `docs/firewall-rule-matrix.md` | Firewall policy: source → dest → port → action → justification |
 | `docs/build-runbook.md` | Step-by-step build: hypervisor → OPNsense → VLANs → DC → verification |
-| `docs/interview-answers.md` | "How did you build this?" — talking points for interviews |
 | `templates/opnsense-aliases.example.xml` | Sanitized OPNsense config snippet: firewall aliases (placeholders) |
 | `templates/opnsense-dhcp-static.example.xml` | Sanitized OPNsense config snippet: DHCP static mappings with `__PLACEHOLDERS__` |
 | `templates/opnsense-firewall-rules.example.txt` | Human-readable rule list to apply via the OPNsense UI (not a raw export) |
