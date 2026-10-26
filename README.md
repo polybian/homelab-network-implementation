@@ -1,4 +1,4 @@
-# Homelab Network Implementation — Virtualized Segmented Network with OPNsense + Active Directory
+# Homelab Network Implementation: Virtualized Segmented Network with OPNsense + Active Directory
 
 A virtualized network I designed from scratch:
 an OPNsense firewall-router VM segments one home network into three VLANs,
@@ -16,7 +16,7 @@ configuration (interfaces, aliases, DHCP relay/static mappings), and a
 step-by-step build runbook with a verification checklist.
 
 ```
-                    [ ISP / building uplink ]   WAN — DHCP from upstream
+                    [ ISP / building uplink ]   WAN - DHCP from upstream
                               │
                     ┌─────────┴─────────────┐
                     │   OPNsense VM         │  2 GB RAM, 2 vNIC
@@ -73,7 +73,7 @@ python3 scripts/validate-address-plan.py
 ## Security notes
 
 - Default posture is **deny**: WAN→LAN is denied by default, and VLAN 30
-  (IoT/Guest) cannot initiate connections to any RFC 1918 address — it only
+  (IoT/Guest) cannot initiate connections to any RFC 1918 address. It only
   gets internet egress. Every allowed flow is listed and justified in
   `docs/firewall-rule-matrix.md`.
 - Templates are **sanitized examples**, not live exports: no real credentials,

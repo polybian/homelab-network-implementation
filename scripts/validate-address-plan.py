@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""validate-address-plan.py — consistency-check the home IP/VLAN plan.
+"""validate-address-plan.py - consistency-check the home IP/VLAN plan.
 
 Mirrors docs/ip-vlan-plan.md. Exits non-zero and prints FAIL lines if:
   - any two subnets overlap

@@ -1,5 +1,5 @@
 <!--
-  TEMPLATE — not a live OPNsense export.
+  TEMPLATE - not a live OPNsense export.
   Sanitized example of the <aliases> section of config.xml for the home
   network implementation. Values below are design values from docs/ip-vlan-plan.md.
   Create the aliases via Firewall -> Aliases in the GUI, or merge carefully.

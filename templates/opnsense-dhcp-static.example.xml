@@ -1,5 +1,5 @@
 <!--
-  TEMPLATE — not a live OPNsense export.
+  TEMPLATE - not a live OPNsense export.
   Sanitized example of DHCP static mappings from <dhcpd> in config.xml.
   MAC addresses and hostnames are __PLACEHOLDERS__ - replace them with your
   own values before use, and never commit real MAC/inventory data.

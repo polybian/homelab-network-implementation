@@ -1,9 +1,9 @@
-# TEMPLATE — human-readable rule list, not a config export.
+# TEMPLATE - human-readable rule list, not a config export.
 # Apply these in OPNsense (Firewall -> Rules) in the order shown, per
 # interface tab. Matches docs/firewall-rule-matrix.md. No credentials here.
 
 # --- Interface: WAN ---
-# (nothing to add — default deny inbound; keep GUI/SSH off WAN)
+# (nothing to add - default deny inbound; keep GUI/SSH off WAN)
 
 # --- Interface: MGMT_LAN (VLAN 10) ---
 # 1. PASS  src MGMT_LAN net -> dst any, ports any
@@ -18,7 +18,7 @@
 # 2. PASS  src SERVERS net -> dst any (WAN), ports 80,443
 #        Updates only.
 # 3. PASS  src SERVERS net -> dst any, port 123/udp
-#        NTP — required for Kerberos time sync on the domain controller.
+#        NTP - required for Kerberos time sync on the domain controller.
 # 4. PASS  src SERVERS net -> dst 192.168.20.1, port 53
 #        OPNsense fallback DNS.
 # 5. (default) BLOCK everything else, log = on
@@ -33,5 +33,5 @@
 #        Guest internet.
 # 4. (default) BLOCK everything else, log = on
 #
-# NOTE: port 80/443 to 192.168.30.1 was deliberately removed — that is the
+# NOTE: port 80/443 to 192.168.30.1 was deliberately removed - that is the
 # OPNsense web GUI on this VLAN and must never be reachable from guests.

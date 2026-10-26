@@ -3,16 +3,16 @@
 ## Topology
 
 - **Host:** one hypervisor (Proxmox VE or ESXi) on a dedicated machine with at
-  least 2 NICs — one for WAN uplink, one for the trunked LAN side.
-- **OPNsense VM** (primary firewall-router): 2 vNICs — `em0` = WAN (DHCP
+  least 2 NICs, one for WAN uplink, one for the trunked LAN side.
+- **OPNsense VM** (primary firewall-router): 2 vNICs, `em0` = WAN (DHCP
   from the upstream modem/router), `em1` = LAN carrying 802.1Q-tagged
   VLANs 10/20/30. OPNsense holds the `.1` gateway on each VLAN and performs
   inter-VLAN routing; the firewall matrix decides what crosses.
 - **Windows Server VM** on VLAN 20, static `192.168.20.10`, promoted to a
   domain controller for `home.arpa`: AD DS + DNS + DHCP roles (design
   choice below).
-- **vSwitch:** Proxmox — one VLAN-aware bridge; OPNsense tags on the guest
-  side. ESXi — port groups with VLAN IDs 10/20/30 on the trunked vSwitch,
+- **vSwitch:** Proxmox, one VLAN-aware bridge; OPNsense tags on the guest
+  side. ESXi: port groups with VLAN IDs 10/20/30 on the trunked vSwitch,
   each VM attached to its port group.
 
 ## Why OPNsense over pfSense
@@ -29,7 +29,7 @@ OPNsense as primary because:
 - **Licensing clarity:** pfSense Plus branding/trademark friction on
   non-Netgate hardware is a distraction for a home build; OPNsense avoids it.
 
-pfSense is documented in the runbook as the drop-in alternative — the VLAN,
+pfSense is documented in the runbook as the drop-in alternative: the VLAN,
 firewall, and AD designs are identical; only the UI steps differ.
 
 ## Why one router does everything
@@ -42,13 +42,13 @@ the firewall at the perimeter.
 
 ## Why AD DS + DNS + DHCP on one DC
 
-A single Windows Server VM holds all three roles — standard for a small
+A single Windows Server VM holds all three roles: standard for a small
 home/single-domain build:
 
 - **AD DS:** identity for the network (users, groups, Group Policy). Forest
   functional level: highest the installed Windows Server supports.
 - **AD-integrated DNS:** zone replication rides AD replication, and secure
-  dynamic updates let domain members self-register — one less service to
+  dynamic updates let domain members self-register, one less service to
   keep consistent.
 - **DHCP on the DC** (not OPNsense) for VLANs 10/20, because DHCP/DNS
   dynamic-update integration (option 81) keeps forward/reverse records
@@ -57,7 +57,7 @@ home/single-domain build:
   fallback DNS forwarder on every gateway.
 
 Noted alternative: host DHCP on OPNsense for all VLANs and delegate only
-DNS to AD — simpler for the firewall admin, but loses automatic DNS
+DNS to AD, simpler for the firewall admin, but loses automatic DNS
 registration of DHCP clients.
 
 ## Hardening notes

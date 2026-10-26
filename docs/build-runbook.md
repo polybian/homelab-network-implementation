@@ -1,4 +1,4 @@
-# Build Runbook — Homelab Network Implementation
+# Build Runbook: Homelab Network Implementation
 
 Prerequisites: a virtualization host with 2+ NICs, ≥16 GB RAM, ≥100 GB disk; Proxmox VE
 8+ **or** ESXi 7/8 installer; OPNsense ISO; Windows Server 2022 (or 2025)
@@ -21,7 +21,7 @@ values (see `ip-vlan-plan.md`).
    (`em0` → WAN bridge/port group, `em1` → trunk bridge/port group).
 2. Boot the OPNsense ISO, install to disk, reboot.
 3. Assign interfaces at the console: WAN = `em0` (DHCP), LAN = `em1`
-   (static for now — 192.168.10.1/24; VLANs come next).
+   (static for now, 192.168.10.1/24; VLANs come next).
 4. Log in to the GUI at `https://192.168.10.1` from a machine on the
    trunk side; change the default `root`/`opnsense` password immediately
    and enable 2FA for the admin account.
@@ -34,7 +34,7 @@ values (see `ip-vlan-plan.md`).
    them, name them `MGMT_LAN`, `SERVERS`, `IOT_GUEST`, set static IPv4:
    `.10.1/24`, `.20.1/24`, `.30.1/24`.
 3. Services → DHCPv4: enable on each VLAN with the ranges from
-   `ip-vlan-plan.md` (VLAN 30 only, if DHCP lives on the DC for 10/20 —
+   `ip-vlan-plan.md` (VLAN 30 only, if DHCP lives on the DC for 10/20,
    see §5; at minimum configure all three so the network works before AD).
 4. **Verify:** from the OPNsense console, `ping` each gateway IP; from a
    test VM on each port group, confirm DHCP lease + gateway ping.
@@ -43,7 +43,7 @@ values (see `ip-vlan-plan.md`).
 
 1. Firewall → Aliases: create `RFC1918_Networks` (10.0.0.0/8,
    172.16.0.0/12, 192.168.0.0/16) and `AD_Domain_Ports` (the port set in
-   the matrix) — see `templates/opnsense-aliases.example.xml`.
+   the matrix), see `templates/opnsense-aliases.example.xml`.
 2. Apply the rules from `docs/firewall-rule-matrix.md` per interface tab,
    **in order** (deny-before-allow for the guest VLAN). Enable logging on
    the block rules.
@@ -53,7 +53,7 @@ values (see `ip-vlan-plan.md`).
    `curl https://example.com` must succeed; from VLAN 10, RDP/SSH to
    192.168.20.10 must succeed.
 
-## 5. Windows Server — AD DS install
+## 5. Windows Server: AD DS install
 
 1. Create the VM on the SERVERS port group: 2 vCPU, 4 GB RAM, 60 GB disk;
    static IP 192.168.20.10/24, gateway 192.168.20.1, DNS 127.0.0.1 (self
@@ -66,7 +66,7 @@ values (see `ip-vlan-plan.md`).
    VLAN 20: 192.168.20.100–149), with option 006 (DNS) = 192.168.20.10 and
    option 015 (DNS domain) = `home.arpa`; enable DNS dynamic updates.
 6. If DHCP stays on OPNsense instead: set OPNsense DHCP option 006 to
-   192.168.20.10 and note that client DNS records won't self-register —
+   192.168.20.10 and note that client DNS records won't self-register,
    the documented trade-off in `architecture.md`.
 
 ## 6. Join a client + Group Policy smoke test
